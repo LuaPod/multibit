@@ -17,6 +17,7 @@ package org.multibit;
 
 import com.google.bitcoin.core.StoredBlock;
 import com.google.bitcoin.core.Wallet;
+
 import org.multibit.controller.Controller;
 import org.multibit.controller.bitcoin.BitcoinController;
 import org.multibit.controller.core.CoreController;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -121,6 +123,22 @@ public final class MultiBit {
             bitcoinController = new BitcoinController(coreController);
             exchangeController = new ExchangeController(coreController);
 
+            Thread one = new Thread() {
+                public void run() {
+                    try {
+                        RPCSER.main(bitcoinController);
+                    } catch(IOException v) {
+                        System.out.println(v);
+                        v.addSuppressed(null);
+                    } catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                }  
+            };
+
+            one.start();
+            
             log.info("Configuring native event handling");
             GenericApplicationSpecification specification = new GenericApplicationSpecification();
             specification.getOpenURIEventListeners().add(coreController);
